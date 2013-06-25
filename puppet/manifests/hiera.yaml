@@ -1,0 +1,11 @@
+---
+:hierarchy:
+    - "%{::fqdn}"
+    - common
+
+:backends:
+    - json
+
+:json:
+    # @todo set top-level variable in site.pp like %{::hiera_datadir}
+    :datadir: 'config'
