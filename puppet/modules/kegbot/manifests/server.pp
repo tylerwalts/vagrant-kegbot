@@ -2,8 +2,6 @@ class kegbot::server ( $install_base = "/opt/kegbot"){
 
     $packages = [
         'build-essential',
-        #build-dep
-        #python-mysqldb
         'git-core',
         'libjpeg-dev',
         'libmysqlclient-dev',
@@ -36,22 +34,29 @@ class kegbot::server ( $install_base = "/opt/kegbot"){
         ],
     }
 
-    ####  TODO:  Things below this line need some testing...
-
+    $install_kegbot_command  = "source /opt/kegbot/bin/activate && sudo pip install kegbot"
     exec { 'install_kegbot':
-        command  => "bash -c 'source /opt/kegbot/bin/activate && sudo pip install kegbot'",
+        command  => "bash -c '$install_kegbot_command'",
         creates  => "/usr/local/bin/kegbot",
         user     => 'vagrant',
-        timeout  => 900, # 15 mins - this takes a while to dl & install python deps
+        timeout  => 900,
         require  => Exec['create_kegbot_virtualenv'],
     }
 
-    notify {"TODO:  Need to create config file - left off at: https://kegbot.org/docs/server/configure-kegbot/": 
-        require  => Exec['install_kegbot'],
+    # Make the bashrc source the kegbot activate
+    file { '/home/vagrant/.bashrc':
+        source  => 'puppet:///modules/kegbot/bashrc',
+        owner   => 'vagrant',
+        require => Exec['install_kegbot'],
     }
+
+    ####  TODO:  Ensure kegbot configuration and data dir
+
     #file { '/etc/kegbot/local_settings.py':
         #content  => template("kegbot/local_settings.py.erb"),
         ##content => 'puppet:///kegbot/local_settings.py',
     #}
+
+    #file { '/opt/kegbot-data':
 
 }

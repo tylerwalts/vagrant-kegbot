@@ -18,14 +18,14 @@ class kegbot::mysql ( $root_pwd, $kegbot_pwd ){
     }
 
     exec { 'createKegbotDb':
-        command        => "mysql -uroot -p$root_pwd -e 'create database kegbot;' -sN",
-        onlyif        => "test `mysql -uroot -p$root_pwd -e 'show databases;' -sN | grep -c '^kegbot$'` -eq 0",
-        require        => Exec['setRootPwd'],
+        command => "mysql -uroot -p$root_pwd -e 'create database kegbot;' -sN",
+        onlyif  => "test `mysql -uroot -p$root_pwd -e 'show databases;' -sN | grep -c '^kegbot$'` -eq 0",
+        require => Exec['setRootPwd'],
     }
 
     exec { 'createKegbotDbUser':
-        command        => "mysql -uroot -p$root_pwd -e 'GRANT ALL PRIVILEGES ON kegbot.* to kegbot@localhost IDENTIFIED BY \"$kegbot_pwd\";' -sN",
-        onlyif  => "test `mysql -ukegbot -p$kegbot_pwd kegbot -e 'show tables;' -sN | grep -c 'Table'` -eq 0",
+        command => "mysql -uroot -p$root_pwd -e 'GRANT ALL PRIVILEGES ON kegbot.* to kegbot@localhost IDENTIFIED BY \"$kegbot_pwd\";' -sN",
+        unless  => "mysql -ukegbot -p$kegbot_pwd kegbot -e 'show tables;'",
         require => Exec['createKegbotDb'],
     }
 

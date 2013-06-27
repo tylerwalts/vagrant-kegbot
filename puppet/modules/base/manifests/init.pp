@@ -9,4 +9,9 @@ class base {
         ensure  => latest
     }
 
+    file { '/home/vagrant/.screenrc':
+        source => 'puppet:///modules/base/screenrc',
+        owner  => 'vagrant',
+    }
+
 }
