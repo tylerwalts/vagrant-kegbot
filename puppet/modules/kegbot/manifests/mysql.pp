@@ -24,7 +24,7 @@ class kegbot::mysql ( $root_pwd, $kegbot_pwd ){
     }
 
     exec { 'createKegbotDbUser':
-        command        => "mysql -uroot -p$root_pwd -e 'GRANT ALL PRIVILEGES ON kegbot.* to kegbot@localhost IDENTIFIED BY '$kegbot_pwd';' -sN",
+        command        => "mysql -uroot -p$root_pwd -e 'GRANT ALL PRIVILEGES ON kegbot.* to kegbot@localhost IDENTIFIED BY \"$kegbot_pwd\";' -sN",
         onlyif  => "test `mysql -ukegbot -p$kegbot_pwd kegbot -e 'show tables;' -sN | grep -c 'Table'` -eq 0",
         require => Exec['createKegbotDb'],
     }
