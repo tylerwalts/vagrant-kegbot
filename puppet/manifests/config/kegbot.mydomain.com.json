@@ -1,4 +1,5 @@
 {
   "kegbot::mysql::root_pwd":"changeme1",
-  "kegbot::mysql::kegbot_pwd":"changeme2"
+  "kegbot::mysql::kegbot_pwd":"changeme2",
+  "kegbot::server::kegbot_pwd":"changeme2"
 }

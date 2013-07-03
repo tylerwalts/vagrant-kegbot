@@ -7,6 +7,11 @@ nodes = [
 ]
 
 Vagrant::Config.run do |config|
+ 
+  ### Port Forwarding
+  # kegbot server
+  config.vm.forward_port 8000, 6969 
+
   nodes.each do |node|
     config.vm.define node[:hostname] do |node_config|
       node_config.vm.box = node[:box]
