@@ -39,6 +39,17 @@ $log_dir = '/var/log/kegbot'
         group  => $group
     }
     
+    # Create gFlags file for setup script
+    file { 'config_gflags':
+        path     => "$config_dir/config.gflags",
+        content  => template("kegbot/config.gflags.erb"),
+        owner    => $user,
+        group    => $group,
+        require  => [ 
+            File[$config_dir]
+        ]
+    }
+
     exec { 'create_virtualenv':
         command => "bash -c 'virtualenv $install_dir'",
         creates => "$install_dir/bin/python",
@@ -66,17 +77,6 @@ $log_dir = '/var/log/kegbot'
         require => Exec['install_kegbot']
     }
 
-    # Create gFlags file for setup script
-    file { 'config_gflags':
-        path     => "$config_dir/config.gflags",
-        content  => template("kegbot/config.gflags.erb"),
-        owner    => $user,
-        group    => $group,
-        require  => [ 
-            File[$config_dir]
-        ]
-    }
-
     $setup_server_command = "source $install_dir/bin/activate && $install_dir/bin/setup-kegbot.py --flagfile=$config_dir/config.gflags"
     exec { 'setup_server':
         command => "bash -c '$setup_server_command'",
@@ -87,12 +87,19 @@ $log_dir = '/var/log/kegbot'
         ]
     }
 
+    $upgrade_server_command = "source $install_dir/bin/activate && $install_dir/bin/pip install --upgrade kegbot && echo 'yes' | $install_dir/bin/kegbot kb_upgrade" 
+    exec { 'upgrade_kegbot':
+        command  => "bash -c '$upgrade_server_command'",
+        user     => $user,
+        require  => Exec["setup_server"]
+    }
+
     $start_server_command = "source $install_dir/bin/activate && $install_dir/bin/kegbot runserver 0.0.0.0:8000 &> $log_dir/server.log &"
     exec { 'start_server':
         command => "bash -c '$start_server_command'",
         user    => $user,
         require => [
-            Exec['setup_server'],
+            Exec['upgrade_kegbot'],
             File[$log_dir]
         ]
     }
@@ -102,5 +109,5 @@ $log_dir = '/var/log/kegbot'
         command => "bash -c '$start_celeryd_command'",
         user    => $user,
         require => Exec['start_server']
-    }    
+    }   
 }
