@@ -1,12 +1,12 @@
 domain     = 'mydomain.com'
-#vagrantbox = 'http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box'
-vagrantbox = 'ubuntu-server-12042-x64-vbox4210.box'
+vagrantbox = 'http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box'
 
 nodes = [
-  { :hostname => 'kegbot',          :ip => '192.168.0.69', :box => 'Ubuntu12' },
+  { :hostname => 'kegbot', :ip => '192.168.0.69', :box => 'Ubuntu12' },
 ]
 
 Vagrant::Config.run do |config|
+ 
   nodes.each do |node|
     config.vm.define node[:hostname] do |node_config|
       node_config.vm.box = node[:box]
@@ -20,6 +20,9 @@ Vagrant::Config.run do |config|
         '--name', node[:hostname],
         '--memory', memory.to_s
       ]
+
+      ## kegbot port fowarding
+      node_config.vm.forward_port 8000, 1213
     end
   end
 
