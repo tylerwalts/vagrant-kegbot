@@ -3,7 +3,7 @@ $kegbot_pwd,
 $user = 'vagrant',
 $group = 'vagrant',
 $install_dir = '/opt/kegbot',
-$data_dir = '/opt/kegbot-data',
+$data_dir = '/opt/kegbot/data',
 $config_dir = '/etc/kegbot',
 $log_dir = '/var/log/kegbot'
 ){
@@ -25,7 +25,6 @@ $log_dir = '/var/log/kegbot'
 
     $directories = [
         $install_dir,
-        $data_dir,
         $config_dir,
         $log_dir
     ]
@@ -67,25 +66,41 @@ $log_dir = '/var/log/kegbot'
         require => Exec['install_kegbot']
     }
 
-    file { 'local_settings':
-        path     => "$config_dir/local_settings.py",
-        content  => template("kegbot/local_settings.py.erb"),
+    # Create gFlags file for setup script
+    file { 'config_gflags':
+        path     => "$config_dir/config.gflags",
+        content  => template("kegbot/config.gflags.erb"),
         owner    => $user,
         group    => $group,
         require  => [ 
-            Exec['install_kegbot'],
-            File[$data_dir],
             File[$config_dir]
         ]
     }
 
-    $start_server_command = "source $install_dir/bin/activate && $install_dir/bin/kegbot runserver &> $log_dir/server.log &"
+    $setup_server_command = "source $install_dir/bin/activate && $install_dir/bin/setup-kegbot.py --flagfile=$config_dir/config.gflags"
+    exec { 'setup_server':
+        command => "bash -c '$setup_server_command'",
+        user    => $user,
+        require => [
+            Exec['install_kegbot'],
+            File['config_gflags']
+        ]
+    }
+
+    $start_server_command = "source $install_dir/bin/activate && $install_dir/bin/kegbot runserver 0.0.0.0:8000 &> $log_dir/server.log &"
     exec { 'start_server':
         command => "bash -c '$start_server_command'",
         user    => $user,
         require => [
-            File['local_settings'],
+            Exec['setup_server'],
             File[$log_dir]
         ]
     }
+
+    $start_celeryd_command = "source $install_dir/bin/activate && $install_dir/bin/kegbot celeryd_detach -E"
+    exec { 'start_celeryd':
+        command => "bash -c '$start_celeryd_command'",
+        user    => $user,
+        require => Exec['start_server']
+    }    
 }
