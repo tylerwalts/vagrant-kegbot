@@ -2,7 +2,7 @@ domain     = 'mydomain.com'
 vagrantbox = 'http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box'
 
 nodes = [
-  { :hostname => 'kegbot', :ip => '192.168.0.69', :box => 'Ubuntu12' },
+  { :hostname => 'kegbot', :ip => '192.168.0.69', :box => 'precise64' },
 ]
 
 Vagrant::Config.run do |config|
@@ -31,8 +31,5 @@ Vagrant::Config.run do |config|
     puppet.manifest_file = 'site.pp'
     puppet.module_path = 'puppet/modules'
     puppet.options = "--hiera_config hiera.yaml"
-    puppet.facter = {
-        "is_vagrant" => true,
-    }
   end
 end
