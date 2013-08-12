@@ -7,5 +7,4 @@
     - json
 
 :json:
-    # @todo set top-level variable in site.pp like %{::hiera_datadir}
-    :datadir: 'config'
+    :datadir: "%{::puppet_cwd}/manifests/config"

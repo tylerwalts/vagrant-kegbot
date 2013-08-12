@@ -1,28 +1,31 @@
-domain     = 'mydomain.com'
+domain     = 'kegbot.mydomain.com'
 vagrantbox = 'http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box'
 
 nodes = [
-  { :hostname => 'kegbot', :ip => '192.168.0.69', :box => 'precise64' },
+  { :hostname => 'vagrant', :ip => '192.168.0.69', :box => 'precise64' },
 ]
 
-Vagrant::Config.run do |config|
+Vagrant.configure("2") do |config|
  
   nodes.each do |node|
     config.vm.define node[:hostname] do |node_config|
       node_config.vm.box = node[:box]
-      node_config.vm.host_name = node[:hostname] + '.' + domain
-      node_config.vm.network :hostonly, node[:ip]
+      node_config.vm.hostname = node[:hostname] + '.' + domain
+      node_config.vm.network :private_network, ip: node[:ip]
+
       node_config.vm.box_url = vagrantbox
 
       memory = node[:ram] ? node[:ram] : 1024;
-      node_config.vm.customize [
-        'modifyvm', :id,
-        '--name', node[:hostname],
-        '--memory', memory.to_s
-      ]
+      node_config.vm.provider :virtualbox do |vb|
+        vb.customize [
+            'modifyvm', :id,
+            '--name', node[:hostname],
+            '--memory', memory.to_s
+        ]
+        vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1" ]
+      end
 
-      ## kegbot port fowarding
-      node_config.vm.forward_port 8000, 1213
+      node_config.vm.network :forwarded_port, guest: 1213, host: 8000
     end
   end
 
@@ -30,6 +33,6 @@ Vagrant::Config.run do |config|
     puppet.manifests_path = 'puppet/manifests'
     puppet.manifest_file = 'site.pp'
     puppet.module_path = 'puppet/modules'
-    puppet.options = "--hiera_config hiera.yaml"
+    puppet.options = "--hiera_config /vagrant/puppet/manifests/hiera.yaml"
   end
 end

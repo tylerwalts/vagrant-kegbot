@@ -1,4 +1,10 @@
 {
+  "classes":[
+    "base",
+    "kegbot::pre",
+    "kegbot::mysql",
+    "kegbot::server"
+  ],
   "kegbot::mysql::root_pwd":"changeme1",
   "kegbot::mysql::kegbot_pwd":"changeme2",
   "kegbot::server::kegbot_pwd":"changeme2"
