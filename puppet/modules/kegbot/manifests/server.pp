@@ -63,10 +63,11 @@ class kegbot::server (
 
     $install_command = "source $install_dir/bin/activate && $install_dir/bin/easy_install -U distribute && $install_dir/bin/pip install kegbot"
     exec { 'install_kegbot':
-        command  => "bash -c '$install_command'",
-        creates  => "$install_dir/bin/kegbot",
-        user     => $user,
-        require  => Exec["create_virtualenv"],
+        command => "bash -c '$install_command'",
+        creates => "$install_dir/bin/kegbot",
+        user    => $user,
+        timeout => 600,
+        require => Exec["create_virtualenv"],
     }
 
     # Make the bashrc source the kegbot activate
