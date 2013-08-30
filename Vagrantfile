@@ -25,7 +25,7 @@ Vagrant.configure("2") do |config|
         vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1" ]
       end
 
-      node_config.vm.network :forwarded_port, guest: 1213, host: 8000
+      node_config.vm.network :forwarded_port, guest: 8000, host: 8000
     end
   end
 
