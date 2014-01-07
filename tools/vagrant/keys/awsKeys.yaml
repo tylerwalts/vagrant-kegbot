@@ -1,0 +1,4 @@
+accessKey: MY_ACCESS_KEY
+secretKey: MY_SECRET_KEY
+keypair: MY_KEYPAIR
+keypath: tools/vagrant/keys/MY_KEYFILE.pem

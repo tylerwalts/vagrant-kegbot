@@ -1,0 +1,5 @@
+ # Your private keys and things go in this directory and should be protected.
+# This is to keep this directory always clear and ignored for commit, besides this file.
+*
+ !.gitignore
+

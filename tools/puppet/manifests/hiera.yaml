@@ -1,0 +1,14 @@
+---
+:hierarchy:
+  - "hosts/%{::fqdn}"
+  - common
+
+:backends:
+  - yaml
+  - json
+
+:json: &data_dir
+  :datadir: "%{::hiera_config}/"
+
+:yaml: *data_dir
+

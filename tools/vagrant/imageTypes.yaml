@@ -1,0 +1,15 @@
+# Define instance types in sets, to work local, AWS and Rackspace
+
+centos64:
+    vagrantBox: Centos64
+    vagrantUrl: http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210.box
+    amazonImage: ami-6fb1fe06
+    rackspaceImage: TBD
+
+precise64:
+    vagrantBox: precise64
+    vagrantUrl: http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box
+    amazonImage: TBD
+    rackspaceImage: TBD
+
+#3663194 on 2013-11-12_1709
