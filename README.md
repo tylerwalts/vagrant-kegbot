@@ -19,3 +19,7 @@ Usage:
 * http://192.168.0.69:8000/
 
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/tylerwalts/vagrant-kegbot/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
