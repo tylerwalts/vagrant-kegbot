@@ -10,7 +10,9 @@ class general ( $ensure = 'latest' ){
         'screen',
         'tree',
         'ntp',
-        'curl'
+        'curl',
+        'lynx',
+        'rake'
     ]
 
     ensure_packages($packages)
