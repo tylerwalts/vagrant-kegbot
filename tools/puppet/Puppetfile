@@ -1,0 +1,10 @@
+forge "http://forge.puppetlabs.com"
+
+mod "puppetlabs/stdlib"
+mod "bashtoni/timezone"
+mod "user_account",
+  :git => "git://github.com/tylerwalts/puppet-user_account.git"
+mod "kegbot", 
+  :git => "git://github.com/burdara/puppet-kegbot.git",
+  :ref => 'develop'
+

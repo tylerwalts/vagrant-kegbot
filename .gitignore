@@ -1,2 +1,6 @@
 .vagrant
 ubuntu-server-12042-x64-vbox4210.box
+tools/puppet/.tmp
+tools/puppet/.librarian/
+tools/puppet/Gemfile.lock
+tools/puppet/Puppetfile.lock

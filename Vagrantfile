@@ -26,13 +26,10 @@ Vagrant.configure("2") do |config|
       end
 
       node_config.vm.network :forwarded_port, guest: 8000, host: 8000
-    end
-  end
 
-  config.vm.provision :puppet do |puppet|
-    puppet.manifests_path = 'puppet/manifests'
-    puppet.manifest_file = 'site.pp'
-    puppet.module_path = 'puppet/modules'
-    puppet.options = "--hiera_config /vagrant/puppet/manifests/hiera.yaml"
+      node_config.vm.provision :shell do |shell|
+        shell.inline = "/vagrant/tools/puppet/run_puppet_apply.sh -l -f FACTER_hostname=" + node[:hostname]
+      end
+    end
   end
 end

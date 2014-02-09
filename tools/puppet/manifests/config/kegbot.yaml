@@ -1,0 +1,16 @@
+---
+  classes:
+    - "timezone"
+    - "user_account"
+    - "user_account::vagrant"
+    - "kegbot"
+    #- "firewall"
+    #- "project_firewall::pre"
+    #- "project_firewall::post"
+    #- "project_firewall::dev"
+  general::ensure: "latest"
+  timezone::timezone: "US/Central"
+  user_account::users:
+    - "root"
+    - "vagrant"
+

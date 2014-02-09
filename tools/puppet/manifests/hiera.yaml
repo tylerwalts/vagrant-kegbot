@@ -1,0 +1,9 @@
+---
+:hierarchy:
+  - kegbot
+
+:backends:
+  - yaml
+
+:yaml:
+  :datadir: "%{::hiera_config}/"
