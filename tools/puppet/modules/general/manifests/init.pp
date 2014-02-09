@@ -7,10 +7,8 @@ class general ( $ensure = 'latest' ){
         'unzip',
         'zip',
         'git',
-        'vim-enhanced',
         'screen',
         'tree',
-        'net-snmp',
         'ntp',
         'curl'
     ]
