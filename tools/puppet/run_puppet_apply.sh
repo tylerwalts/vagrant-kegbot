@@ -5,6 +5,7 @@
 ###
 [[ "$EUID" != "0" ]] && echo -e "\nError:\n\t**Run this script as root or sudo.\n" && exit 1
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+projectModules="${basedir}/modules"
 
 function log  {
     echo -e "[$(date "+%Y-%m-%dT%H:%M:%SZ%z")] $1"
@@ -84,8 +85,6 @@ function upgradePuppet {
     fi
     # Install puppet from the puppetlabs repo
     packageInstall puppet
-    # Get the location of the newest puppet and use this moving forward
-    findPuppet
 }
 
 ###
@@ -104,24 +103,23 @@ function updateLibrary {
     fi
     # Ensure the puppet librarian gem is installed.
     if [[ "$(gem search -i librarian-puppet)" == "false" ]]; then
-      gem install librarian-puppet --no-ri --no-rdoc
+      gem install librarian-puppet -v 0.9.11 --no-ri --no-rdoc
       return=$?
-      # If the existing/default gem source is bad/old, then use rubygems.
-      # TODO: refactor this to gem search first, and be >= 0.9.10
-      libVersion="$(gem search librarian-puppet | grep '0.9.10')"
+      # If the existing/default gem source is bad/old, then use rubygems and bundler
+      libVersion="$(gem search librarian-puppet | grep '0.9.11')"
       if [[ "$return" != "0" || "$libVersion" == "" ]]; then
         gem install bundler
-        echo -e "source 'https://rubygems.org'\ngem 'librarian-puppet'" > Gemfile
+        echo -e "source 'https://rubygems.org'\ngem 'librarian-puppet', '0.9.11'" > Gemfile
         bundle install
       fi
     fi
     # Install or update the puppet module library
     if [ -f $basedir/.librarian ]; then
-        log "Installing librarian..."
-        command="librarian-puppet update --path ./lib"
+        log "Updating librarian..."
+        command="/usr/bin/librarian-puppet update --path ./lib"
     else
-        log "Updating puppet lib with librarian"
-        command="librarian-puppet install --path ./lib"
+        log "Installing puppet lib with librarian"
+        command="/usr/bin/librarian-puppet install --path ./lib"
     fi
     log "Running librarian command: $command"
     $command
@@ -140,6 +138,75 @@ function configHiera {
     export FACTER_hiera_config="${basedir}/manifests/config"
 }
 
+
+function install_module_bundle {
+    modulePath=$1
+    [[ -f $modulePath/.gemfile ]] && gemfileOpt="--gemfile .gemfile"
+    cd $modulePath
+    bundle install $gemFileOpt --path .vendor
+    cd -
+}
+
+function lint_module {
+    modulePath=$1
+    cd $modulePath
+    log "Lint-ing module at: $(pwd)"
+    bundle check || install_module_bundle $modulePath
+    bundle exec rake lint
+    cd -
+}
+
+function rspec_module {
+    modulePath=$1
+    cd $modulePath
+    log "Rspec-ing module at: $(pwd)"
+    bundle check || install_module_bundle $modulePath
+    bundle exec rake rspec
+    cd -
+}
+
+function test_module {
+    modulePath=$1
+    testType=$2
+    if [[ ! -f "$modulePath/Rakefile" ]]; then
+        log "Skipping module without tests: $modulePath (missing Rakefile)"
+    elif [[ ! -f "$modulePath/Gemfile" && ! -f "$modulePath/.gemfile" ]]; then
+        log "Skipping module without tests: $modulePath (missing Gemfile or .gemfile )"
+    else
+        if [[ "$testType" != "" ]]; then
+            case $testType in
+                lint) lint_module $modulePath ;;
+                rspec) lint_module $modulePath ;;
+                *) log "Invalid test type" && exit 1 ;;
+            esac
+        else
+            #Default: Do both
+            lint_module $modulePath
+            rspec_module $modulePath
+        fi
+    fi
+}
+
+function test_all_modules {
+    testType=$1
+    moduleList="$(ls $projectModules)"
+    echo "moduleList=$moduleList"
+    for module in $(ls $projectModules); do
+        log "Testing module: $module"
+        test_module $projectModules/$module $testType
+    done
+}
+
+function testProject {
+    module=$1
+    testType=$2
+    if [[ "$module" == "" || "$module" == "all" ]]; then
+        test_all_modules $testType
+    else
+        test_module $projectModules/$module $testType
+    fi
+}
+
 # Ensure puppet & dependencies are present
 findPuppet
 [[ "$puppetExec" == "" ]] && packageInstall puppet
@@ -152,6 +219,11 @@ while [ "$1" != "" ]; do
         -l | --librarian )
             shift
             updateLibrary
+            ;;
+        -t | --test )
+            shift
+            testProject $1 $2
+            exit
             ;;
         -f | --facter_override )
             shift
