@@ -6,7 +6,7 @@ nodes = [
 ]
 
 Vagrant.configure("2") do |config|
- 
+
   nodes.each do |node|
     config.vm.define node[:hostname] do |node_config|
       node_config.vm.box = node[:box]
@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
 
       node_config.vm.box_url = vagrantbox
 
-      memory = node[:ram] ? node[:ram] : 1024;
+      memory = node[:ram] ? node[:ram] : 2048;
       node_config.vm.provider :virtualbox do |vb|
         vb.customize [
             'modifyvm', :id,

@@ -12,7 +12,8 @@ class general ( $ensure = 'latest' ){
         'ntp',
         'curl',
         'lynx',
-        'rake'
+        'rake',
+        'ruby-bundler'
     ]
 
     ensure_packages($packages)

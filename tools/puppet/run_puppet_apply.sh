@@ -114,12 +114,13 @@ function updateLibrary {
       fi
     fi
     # Install or update the puppet module library
+    librarianExec="$(which librarian-puppet)"
     if [ -f $basedir/.librarian ]; then
         log "Updating librarian..."
-        command="/usr/bin/librarian-puppet update --path ./lib"
+        command="$librarianExec update --path ./lib"
     else
         log "Installing puppet lib with librarian"
-        command="/usr/bin/librarian-puppet install --path ./lib"
+        command="$librarianExec install --path ./lib"
     fi
     log "Running librarian command: $command"
     $command
