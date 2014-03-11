@@ -157,12 +157,12 @@ function lint_module {
     cd -
 }
 
-function rspec_module {
+function spec_module {
     modulePath=$1
     cd $modulePath
     log "Rspec-ing module at: $(pwd)"
     bundle check || install_module_bundle $modulePath
-    bundle exec rake rspec
+    bundle exec rake spec
     cd -
 }
 
@@ -177,13 +177,13 @@ function test_module {
         if [[ "$testType" != "" ]]; then
             case $testType in
                 lint) lint_module $modulePath ;;
-                rspec) lint_module $modulePath ;;
+                spec) lint_module $modulePath ;;
                 *) log "Invalid test type" && exit 1 ;;
             esac
         else
             #Default: Do both
             lint_module $modulePath
-            rspec_module $modulePath
+            spec_module $modulePath
         fi
     fi
 }
