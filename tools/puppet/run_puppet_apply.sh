@@ -76,15 +76,19 @@ function upgradePuppet {
         wget http://apt.puppetlabs.com/puppetlabs-release-precise.deb -O /tmp/puppetlabs-release-precise.deb
         dpkg -i /tmp/puppetlabs-release-precise.deb
         sudo apt-get update
+        # Install puppet from the puppetlabs repo
+        packageInstall puppet
     elif [ "${foundRPM}" -eq '0' ]; then
+        log "Adding the Puppet Labs repo..."
+        rpm -ivh http://yum.puppetlabs.com/el/6/products/$arch/puppetlabs-release-6-7.noarch.rpm
         log "Upgrading puppet using RPM..."
-        rpm -ivh http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-7.noarch.rpm
+        yum -y install libselinux-utils libselinux-ruby ruby-devel rubygems puppet git dmidecode virt-what pciutils gcc
+        yum -y install  --disablerepo=amzn-* --enablerepo=puppetlabs*,epel*  facter hiera rubygems puppet
+        log "Puppet toolset installation complete."
     else
         log "No package system detected."
         exit 1
     fi
-    # Install puppet from the puppetlabs repo
-    packageInstall puppet
 }
 
 ###
