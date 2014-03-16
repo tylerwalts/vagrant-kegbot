@@ -6,6 +6,7 @@
 [[ "$EUID" != "0" ]] && echo -e "\nError:\n\t**Run this script as root or sudo.\n" && exit 1
 basedir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 projectModules="${basedir}/modules"
+arch="x86_64" #i386
 
 function log  {
     echo -e "[$(date "+%Y-%m-%dT%H:%M:%SZ%z")] $1"
