@@ -14,3 +14,7 @@ Usage:
 5.  Test in browser:  `http://localhost:8000`
 6.  Run through setup process in browser, and run the Android kegbot app on the tablet to connect the two.
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/tylerwalts/vagrant-kegbot/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
