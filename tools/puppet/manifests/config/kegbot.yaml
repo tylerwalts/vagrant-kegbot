@@ -8,7 +8,7 @@
   general::ensure: "latest"
   timezone::timezone: "US/Central"
   user_account::users:
-    - "root"
-    - "vagrant"
+    root: {}
+    vagrant: {}
   #kegbot::database_type: "mysql"
 
