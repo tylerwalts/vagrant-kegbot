@@ -1,8 +1,8 @@
 domain     = 'kegbot.mydomain.com'
-vagrantbox = 'http://puppet-vagrant-boxes.puppetlabs.com/ubuntu-server-12042-x64-vbox4210.box'
+vagrantbox = 'https://cloud-images.ubuntu.com/vagrant/trusty/20140625/trusty-server-cloudimg-i386-vagrant-disk1.box'
 
 nodes = [
-  { :hostname => 'vagrant', :ip => '192.168.0.69', :box => 'precise64' },
+  { :hostname => 'vagrant', :ip => '192.168.0.69', :box => 'trusty' },
 ]
 
 Vagrant.configure("2") do |config|
@@ -25,10 +25,10 @@ Vagrant.configure("2") do |config|
         vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1" ]
       end
 
-      node_config.vm.network :forwarded_port, guest: 8000, host: 8000
+      node_config.vm.network :forwarded_port, guest: 8000, host: 8000, auto_correct: true
 
       node_config.vm.provision :shell do |shell|
-        shell.inline = "/vagrant/tools/puppet/run_puppet_apply.sh -l -f FACTER_hostname=" + node[:hostname]
+        shell.inline = "/vagrant/tools/puppet/run_puppet_apply.sh -g -l -f FACTER_hostname=" + node[:hostname]
       end
     end
   end

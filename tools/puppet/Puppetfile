@@ -1,8 +1,13 @@
-forge "http://forge.puppetlabs.com"
+forge "https://forgeapi.puppetlabs.com"
 
 mod "puppetlabs/stdlib"
 mod "bashtoni/timezone"
-mod "burdara/kegbot"
-mod "user_account",
+#mod "burdara/kegbot"
+
+mod "burdara/kegbot",
+  :git => "git://github.com/burdara/puppet-kegbot.git",
+  :ref => "feature/latest-server-changes"
+
+mod "tylerwalts/user_account",
   :git => "git://github.com/tylerwalts/puppet-user_account.git"
 

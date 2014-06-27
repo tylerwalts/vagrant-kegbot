@@ -9,6 +9,9 @@
   timezone::timezone: "US/Central"
   user_account::users:
     root: {}
-    vagrant: {}
-  #kegbot::database_type: "mysql"
+    vagrant:
+      sudoers: true
+      sudoers_allow_non_tty: true
+  kegbot_instances:
+    kegbot0: {}
 
