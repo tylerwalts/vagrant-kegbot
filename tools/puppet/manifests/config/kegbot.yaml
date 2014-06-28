@@ -13,5 +13,6 @@
       sudoers: true
       sudoers_allow_non_tty: true
   kegbot_instances:
-    kegbot0: {}
+    chi_51: 
+      start_server: false
 
